@@ -21,15 +21,19 @@ pytest-cov = "*"
 [packages]
 aiohttp = "*"
 asyncache = "*"
+atomicwrites = {version="*", sys_platform="== 'win32'"}  # indirect dep
 cachetools = "*"
+colorama = {version="*", sys_platform="== 'win32'"}  # indirect dep
 dataclasses = {version="*", markers="python_version<'3.7'"}
 fastapi = "*"
 gunicorn = "*"
+httptools = {version="*", sys_platform="!= 'win32'"}  # indirect dep
 idna_ssl = {version="*", markers="python_version<'3.7'"}
 python-dateutil = "*"
 python-dotenv = "*"
 requests = "*"
 uvicorn = "*"
+uvloop = {version="*", sys_platform="!= 'win32'"}  # indirect dep
 
 [requires]
 python_version = "3.8"
