@@ -10,5 +10,6 @@ script:
   - "make test"
   - "make lint"
   - "make check-fmt"
+  - "gunicorn --check-config app.main:APP"
 after_success:
   - coveralls
