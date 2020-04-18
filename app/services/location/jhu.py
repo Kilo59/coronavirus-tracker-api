@@ -1,5 +1,6 @@
 """app.services.location.jhu.py"""
 import csv
+import logging
 from datetime import datetime
 
 from asyncache import cached
@@ -12,6 +13,8 @@ from ...utils import countries
 from ...utils import date as date_util
 from ...utils import httputils
 from . import LocationService
+
+LOGGER = logging.getLogger("services.location.jhu")
 
 
 class JhuLocationService(LocationService):
@@ -55,11 +58,15 @@ async def get_category(category):
     url = BASE_URL + "time_series_covid19_%s_global.csv" % category
 
     # Request the data
+    LOGGER.info("Requesting data...")
     async with httputils.CLIENT_SESSION.get(url) as response:
         text = await response.text()
 
+    LOGGER.info("Data received")
+
     # Parse the CSV.
     data = list(csv.DictReader(text.splitlines()))
+    LOGGER.info("CSV parsed")
 
     # The normalized locations.
     locations = []
@@ -92,6 +99,7 @@ async def get_category(category):
                 "latest": int(latest or 0),
             }
         )
+    LOGGER.info("Data normalized")
 
     # Latest total.
     latest = sum(map(lambda location: location["latest"], locations))

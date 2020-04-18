@@ -8,7 +8,6 @@ import requests
 import app.io
 
 LOGGER = logging.getLogger(__name__)
-HERE = pathlib.Path(__file__)
 GEONAMES_BACKUP_PATH = "geonames_population_mappings.json"
 
 # Fetching of the populations.
@@ -37,7 +36,7 @@ def fetch_populations():
         if mappings:
             app.io.save(GEONAMES_BACKUP_PATH, mappings)
     except (json.JSONDecodeError, KeyError, requests.exceptions.Timeout) as err:
-        LOGGER.error(f"Error pulling population data. {err.__class__.__name__}: {err}")
+        LOGGER.warning(f"Error pulling population data. {err.__class__.__name__}: {err}")
         mappings = app.io.load(GEONAMES_BACKUP_PATH)
         LOGGER.info(f"Using backup data from {GEONAMES_BACKUP_PATH}")
     # Finally, return the mappings.

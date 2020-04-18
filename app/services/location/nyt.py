@@ -1,5 +1,6 @@
 """app.services.location.nyt.py"""
 import csv
+import logging
 from datetime import datetime
 
 from asyncache import cached
@@ -10,6 +11,8 @@ from ...location.nyt import NYTLocation
 from ...timeline import Timeline
 from ...utils import httputils
 from . import LocationService
+
+LOGGER = logging.getLogger("services.location.nyt")
 
 
 class NYTLocationService(LocationService):
@@ -73,11 +76,15 @@ async def get_locations():
     """
 
     # Request the data.
+    LOGGER.info("Requesting data...")
     async with httputils.CLIENT_SESSION.get(BASE_URL) as response:
         text = await response.text()
 
+    LOGGER.info("Data received")
+
     # Parse the CSV.
     data = list(csv.DictReader(text.splitlines()))
+    LOGGER.info("CSV parsed")
 
     # Group together locations (NYT data ordered by dates not location).
     grouped_locations = get_grouped_locations_dict(data)
@@ -119,5 +126,6 @@ async def get_locations():
                 },
             )
         )
+    LOGGER.info("Data normalized")
 
     return locations
