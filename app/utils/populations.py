@@ -27,16 +27,16 @@ def fetch_populations():
 
     # Fetch the countries.
     try:
-        countries = requests.get("http://api.geonames.org/countryInfoJSON", params={"username": "dperic"}).json()[
-            "geonames"
-        ]
+        countries = requests.get(
+            "http://api.geonames.org/countryInfoJSON", params={"username": "dperic"}, timeout=2
+        ).json()["geonames"]
         # Go through all the countries and perform the mapping.
         for country in countries:
             mappings.update({country["countryCode"]: int(country["population"]) or None})
 
         if mappings:
             app.io.save(GEONAMES_BACKUP_PATH, mappings)
-    except (json.JSONDecodeError, KeyError) as err:
+    except (json.JSONDecodeError, KeyError, requests.exceptions.Timeout) as err:
         LOGGER.error(f"Error pulling population data. {err.__class__.__name__}: {err}")
         mappings = app.io.load(GEONAMES_BACKUP_PATH)
         LOGGER.info(f"Using backup data from {GEONAMES_BACKUP_PATH}")
