@@ -1,7 +1,6 @@
 """app.utils.populations.py"""
 import json
 import logging
-import pathlib
 
 import requests
 
