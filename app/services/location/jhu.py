@@ -58,11 +58,11 @@ async def get_category(category):
     url = BASE_URL + "time_series_covid19_%s_global.csv" % category
 
     # Request the data
-    LOGGER.info(f"pid:{os.getpid()}: jhu Requesting data...")
+    LOGGER.info(f"pid:{os.getpid()}: jhu Requesting {category} data...")
     async with httputils.CLIENT_SESSION.get(url) as response:
         text = await response.text()
 
-    LOGGER.info("jhu Data received")
+    LOGGER.info(f"jhu {category} Data received: {url}")
 
     # Parse the CSV.
     data = list(csv.DictReader(text.splitlines()))
@@ -99,10 +99,10 @@ async def get_category(category):
                 "latest": int(latest or 0),
             }
         )
-    LOGGER.info("jhu Data normalized")
 
     # Latest total.
     latest = sum(map(lambda location: location["latest"], locations))
+    LOGGER.info(f"jhu Data normalized: {latest}")
 
     # Return the final data.
     return {
@@ -124,11 +124,11 @@ async def get_locations():
     # Get all of the data categories locations.
     confirmed = await get_category("confirmed")
     deaths = await get_category("deaths")
-    # recovered = await get_category("recovered")
+    recovered = await get_category("recovered")
 
     locations_confirmed = confirmed["locations"]
     locations_deaths = deaths["locations"]
-    # locations_recovered = recovered["locations"]
+    locations_recovered = recovered["locations"]
 
     # Final locations to return.
     locations = []
@@ -136,12 +136,14 @@ async def get_locations():
     # Go through locations.
     for index, location in enumerate(locations_confirmed):
         # Get the timelines.
-        timelines = {
-            "confirmed": locations_confirmed[index]["history"],
-            "deaths": locations_deaths[index]["history"],
-            # 'recovered' : locations_recovered[index]['history'],
-        }
-
+        try:
+            timelines = {
+                "confirmed": locations_confirmed[index]["history"],
+                "deaths": locations_deaths[index]["history"],
+                "recovered": locations_recovered[index]["history"],
+            }
+        except IndexError:
+            pass
         # Grab coordinates.
         coordinates = location["coordinates"]
 
@@ -170,7 +172,12 @@ async def get_locations():
                             for date, amount in timelines["deaths"].items()
                         }
                     ),
-                    "recovered": Timeline({}),
+                    "recovered": Timeline(
+                        {
+                            datetime.strptime(date, "%m/%d/%y").isoformat() + "Z": amount
+                            for date, amount in timelines["recovered"].items()
+                        }
+                    ),
                 },
             )
         )
