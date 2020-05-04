@@ -75,7 +75,9 @@ class FakeRequestsGetResponse:
         state = state.lower()
 
         # Determine filepath.
-        filepath = os.path.join(os.path.dirname(__file__), "example_data/{}.csv".format(state))
+        filepath = os.path.join(
+            os.path.dirname(__file__), "example_data/{}.csv".format(state)
+        )
 
         # Return fake response.
         print("Try to read {}".format(filepath))

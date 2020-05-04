@@ -64,7 +64,9 @@ async def get_locations():
             continue
 
         # Coordinates.
-        coordinates = Coordinates(item["Latitude"], item["Longitude"])  # pylint: disable=unused-variable
+        coordinates = Coordinates(
+            item["Latitude"], item["Longitude"]
+        )  # pylint: disable=unused-variable
 
         # Date string without "EDT" at end.
         last_update = " ".join(item["Last Update"].split(" ")[0:2])

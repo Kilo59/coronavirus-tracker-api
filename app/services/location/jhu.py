@@ -41,9 +41,7 @@ class JhuLocationService(LocationService):
 
 
 # Base URL for fetching category.
-BASE_URL = (
-    "https://raw.githubusercontent.com/CSSEGISandData/2019-nCoV/master/csse_covid_19_data/csse_covid_19_time_series/"
-)
+BASE_URL = "https://raw.githubusercontent.com/CSSEGISandData/2019-nCoV/master/csse_covid_19_data/csse_covid_19_time_series/"
 
 
 @cached(cache=TTLCache(maxsize=4, ttl=1800))
@@ -84,7 +82,9 @@ async def get_category(category):
 
         for item in data:
             # Filter out all the dates.
-            dates = dict(filter(lambda element: date_util.is_date(element[0]), item.items()))
+            dates = dict(
+                filter(lambda element: date_util.is_date(element[0]), item.items())
+            )
 
             # Make location history from dates.
             history = {date: int(amount or 0) for date, amount in dates.items()}
@@ -178,13 +178,15 @@ async def get_locations():
                 {
                     "confirmed": Timeline(
                         {
-                            datetime.strptime(date, "%m/%d/%y").isoformat() + "Z": amount
+                            datetime.strptime(date, "%m/%d/%y").isoformat()
+                            + "Z": amount
                             for date, amount in timelines["confirmed"].items()
                         }
                     ),
                     "deaths": Timeline(
                         {
-                            datetime.strptime(date, "%m/%d/%y").isoformat() + "Z": amount
+                            datetime.strptime(date, "%m/%d/%y").isoformat()
+                            + "Z": amount
                             for date, amount in timelines["deaths"].items()
                         }
                     ),
