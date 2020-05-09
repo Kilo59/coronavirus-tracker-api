@@ -14,9 +14,7 @@ class NYTLocation(TimelinedLocation):
         self.state = state
         self.county = county
 
-    def serialize(
-        self, timelines=False
-    ):  # pylint: disable=arguments-differ,unused-argument
+    def serialize(self, timelines=False):  # pylint: disable=arguments-differ,unused-argument
         """
         Serializes the location into a dict.
 

@@ -11,15 +11,7 @@ class Location:  # pylint: disable=too-many-instance-attributes
     """
 
     def __init__(
-        self,
-        id,
-        country,
-        province,
-        coordinates,
-        last_updated,
-        confirmed,
-        deaths,
-        recovered,
+        self, id, country, province, coordinates, last_updated, confirmed, deaths, recovered,
     ):  # pylint: disable=too-many-arguments
         # General info.
         self.id = id
@@ -43,9 +35,7 @@ class Location:  # pylint: disable=too-many-instance-attributes
         :returns: The country code.
         :rtype: str
         """
-        return (
-            countries.country_code(self.country) or countries.DEFAULT_COUNTRY_CODE
-        ).upper()
+        return (countries.country_code(self.country) or countries.DEFAULT_COUNTRY_CODE).upper()
 
     @property
     def country_population(self):
