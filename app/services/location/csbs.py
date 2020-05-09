@@ -8,7 +8,7 @@ from cachetools import TTLCache
 
 from ...caches import check_cache, load_cache
 from ...coordinates import Coordinates
-from ...location.csbs import CSBSLocation
+from ...location import CSBSLocation
 from ...utils import httputils
 from . import LocationService
 
@@ -97,6 +97,6 @@ async def get_locations():
             await load_cache(data_id, locations)
         except TypeError as type_err:
             LOGGER.error(type_err)
-            
+
     # Return the locations.
     return locations
