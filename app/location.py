@@ -1,5 +1,7 @@
-"""app.location"""
+"""app.location.py"""
 import datetime as dt
+import logging
+from pprint import pformat as pf
 from typing import Dict
 
 import pydantic
@@ -7,6 +9,8 @@ import pydantic
 from .models import Latest
 from .utils import countries
 from .utils.populations import country_population
+
+LOGGER = logging.getLogger("app.location")
 
 
 class Coordinates(pydantic.BaseModel):
@@ -110,6 +114,9 @@ class TimelinedLocation(BaseLocation):
 
         if timelines is False:
             serialized.pop("timelines")
+        else:
+            # NOTE this does not actually set the value
+            serialized["latest"]["confirmed"] = serialized["timelines"]["confirmed"]["latest"]
 
         # Return the serialized location.
         return serialized

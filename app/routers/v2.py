@@ -1,5 +1,7 @@
 """app.routers.v2"""
 import enum
+import logging
+from pprint import pformat as pf
 
 from fastapi import APIRouter, HTTPException, Request
 
@@ -7,6 +9,8 @@ from ..data import DATA_SOURCES
 from ..models import LatestResponse, LocationResponse, LocationsResponse
 
 V2 = APIRouter()
+
+LOGGER = logging.getLogger("app.routers.v2")
 
 
 class Sources(str, enum.Enum):
@@ -76,16 +80,18 @@ async def get_locations(
             raise HTTPException(
                 404, detail=f"Source `{source}` does not have the desired location data.",
             )
-
     # Return final serialized data.
-    return {
+    response = {
         "latest": {
+            # TODO: need the TimelinedLocation attributes to be set
             "confirmed": sum(map(lambda location: location.confirmed, locations)),
             "deaths": sum(map(lambda location: location.deaths, locations)),
             "recovered": sum(map(lambda location: location.recovered, locations)),
         },
-        "locations": [location.serialize(timelines) for location in locations],
+        "locations": [location.dict(timelines=timelines) for location in locations],
     }
+    LOGGER.info(pf(response, depth=5))
+    return response
 
 
 # pylint: disable=invalid-name
