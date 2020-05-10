@@ -1,4 +1,6 @@
 """app.location"""
+from typing import Dict
+
 import pydantic
 
 from .models import Latest
@@ -14,7 +16,11 @@ class BaseLocation(pydantic.BaseModel):
     country_code: str = None
     country_population: int = None
     province: str = None
-    coordinates: int = None
+
+    # coordinates
+    latitude: int = 0  # TODO
+    longitude: int = 0  # TODO
+    coordinates: Dict = None  # TODO
 
     # Last update.
     last_updated: str
@@ -26,10 +32,13 @@ class BaseLocation(pydantic.BaseModel):
 
     latest: Latest = None  # Latest 'statistics'
 
-    class Config:
+    class Config:  # pylint: disable=too-few-public-methods
+        """pydantic model settings."""
+
         anystr_strip_whitespace = True
 
     @pydantic.validator("latest", pre=True, always=True)
+    @classmethod
     def set_latest(cls, v, values):
         if v:
             return v
@@ -40,6 +49,7 @@ class BaseLocation(pydantic.BaseModel):
         }
 
     @pydantic.validator("country_code", always=True)
+    @classmethod
     def set_country_code(cls, v, values):
         """Gets the alpha-2 code represention of the country. Returns 'XX' if none is found."""
         if v:
@@ -47,6 +57,7 @@ class BaseLocation(pydantic.BaseModel):
         return countries.country_code(values.get("country", countries.DEFAULT_COUNTRY_CODE)).upper()
 
     @pydantic.validator("country_population", always=True)
+    @classmethod
     def set_country_population(cls, v, values):
         """Gets the population of this location."""
         if v:

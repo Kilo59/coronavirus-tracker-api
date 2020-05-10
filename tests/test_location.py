@@ -112,3 +112,5 @@ def test_base_location(test_id, country, kwargs):
     assert location_instance.country_code
     if location_instance.country_code != "XX":
         assert location_instance.country_population
+
+    assert location_instance.coordinates
