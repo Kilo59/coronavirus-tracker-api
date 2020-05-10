@@ -17,7 +17,7 @@ async def test_get_locations(mock_client_session):
         output = await jhu.get_locations()
 
     assert isinstance(output, list)
-    assert isinstance(output[0], location.Location)
+    assert isinstance(output[0], location.BaseLocation)
 
     # `jhu.get_locations()` creates id based on confirmed list
     location_confirmed = await jhu.get_category("confirmed")

@@ -39,9 +39,9 @@ class BaseLocation(pydantic.BaseModel):
     last_updated: str = f"{dt.datetime.utcnow()}Z"
 
     # Statistics
-    confirmed: int = None  # elide
-    deaths: int = None  # elide
-    recovered: int = None  # elide
+    confirmed: int = 0  # elide
+    deaths: int = 0  # elide
+    recovered: int = 0  # elide
     latest: Latest = None  # Latest 'statistics'
 
     class Config:  # pylint: disable=too-few-public-methods
@@ -96,46 +96,19 @@ class TimelinedLocation(BaseLocation):
     A location with timelines.
     """
 
-    # pylint: disable=too-many-arguments
-    def __init__(self, id, country, province, coordinates, last_updated, timelines):
-        super().__init__(
-            # General info.
-            id,
-            country,
-            province,
-            coordinates,
-            last_updated,
-            # Statistics (retrieve latest from timelines).
-            confirmed=timelines.get("confirmed").latest or 0,
-            deaths=timelines.get("deaths").latest or 0,
-            recovered=timelines.get("recovered").latest or 0,
-        )
+    timelines: Dict = {}
 
-        # Set timelines.
-        self.timelines = timelines
+    @pydantic.validator("timelines", always=True)
+    @classmethod
+    def serialize_timelines(cls, d):
+        return {k: v.serialize() for (k, v) in d.items()}
 
-    # pylint: disable=arguments-differ
-    def serialize(self, timelines=False):
-        """
-        Serializes the location into a dict.
+    def dict(self, timelines=False, **kwargs) -> Dict:
+        """Serializes the location into a dict."""
+        serialized = super().dict(**kwargs)
 
-        :param timelines: Whether to include the timelines.
-        :returns: The serialized location.
-        :rtype: dict
-        """
-        serialized = super().serialize()
-
-        # Whether to include the timelines or not.
-        if timelines:
-            serialized.update(
-                {
-                    "timelines": {
-                        # Serialize all the timelines.
-                        key: value.serialize()
-                        for (key, value) in self.timelines.items()
-                    }
-                }
-            )
+        if timelines is False:
+            serialized.pop("timelines")
 
         # Return the serialized location.
         return serialized

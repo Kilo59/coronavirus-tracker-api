@@ -163,16 +163,14 @@ async def get_locations():
         # Create location (supporting timelines) and append.
         locations.append(
             TimelinedLocation(
-                # General info.
-                index,
-                location["country"],
-                location["province"],
+                id=index,
+                country=location["country"],
+                province=location["province"],
                 # Coordinates.
-                Coordinates(coordinates["lat"], coordinates["long"]),
-                # Last update.
-                datetime.utcnow().isoformat() + "Z",
+                coordinates=Coordinates(latitude=coordinates["lat"], longitude=coordinates["long"]),
+                last_updated=datetime.utcnow().isoformat() + "Z",
                 # Timelines (parse dates as ISO).
-                {
+                timelines={
                     "confirmed": Timeline(
                         {
                             datetime.strptime(date, "%m/%d/%y").isoformat() + "Z": amount
