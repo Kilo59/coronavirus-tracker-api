@@ -1,79 +1,66 @@
 """app.location"""
+import pydantic
+
+from .models import Latest
 from .utils import countries
 from .utils.populations import country_population
 
 
-# pylint: disable=redefined-builtin,invalid-name
-class Location:  # pylint: disable=too-many-instance-attributes
-    """
-    A location in the world affected by the coronavirus.
-    """
+class BaseLocation(pydantic.BaseModel):
+    """A location in the world affected by the coronavirus."""
 
-    def __init__(
-        self, id, country, province, coordinates, last_updated, confirmed, deaths, recovered,
-    ):  # pylint: disable=too-many-arguments
-        # General info.
-        self.id = id
-        self.country = country.strip()
-        self.province = province.strip()
-        self.coordinates = coordinates
+    id: int
+    country: str
+    country_code: str = None
+    country_population: int = None
+    province: str = None
+    coordinates: int = None
 
-        # Last update.
-        self.last_updated = last_updated
+    # Last update.
+    last_updated: str
 
-        # Statistics.
-        self.confirmed = confirmed
-        self.deaths = deaths
-        self.recovered = recovered
+    # Statistics
+    confirmed: int = None
+    deaths: int = None
+    recovered: int = None
 
-    @property
-    def country_code(self):
-        """
-        Gets the alpha-2 code represention of the country. Returns 'XX' if none is found.
+    latest: Latest = None  # Latest 'statistics'
 
-        :returns: The country code.
-        :rtype: str
-        """
-        return (countries.country_code(self.country) or countries.DEFAULT_COUNTRY_CODE).upper()
+    class Config:
+        anystr_strip_whitespace = True
 
-    @property
-    def country_population(self):
-        """
-        Gets the population of this location.
-
-        :returns: The population.
-        :rtype: int
-        """
-        return country_population(self.country_code)
-
-    def serialize(self):
-        """
-        Serializes the location into a dict.
-
-        :returns: The serialized location.
-        :rtype: dict
-        """
+    @pydantic.validator("latest", pre=True, always=True)
+    def set_latest(cls, v, values):
+        if v:
+            return v
         return {
-            # General info.
-            "id": self.id,
-            "country": self.country,
-            "country_code": self.country_code,
-            "country_population": self.country_population,
-            "province": self.province,
-            # Coordinates.
-            "coordinates": self.coordinates.serialize(),
-            # Last updated.
-            "last_updated": self.last_updated,
-            # Latest data (statistics).
-            "latest": {
-                "confirmed": self.confirmed,
-                "deaths": self.deaths,
-                "recovered": self.recovered,
-            },
+            "confirmed": values["confirmed"],
+            "deaths": values["deaths"],
+            "recovered": values["recovered"],
         }
 
+    @pydantic.validator("country_code", always=True)
+    def set_country_code(cls, v, values):
+        """Gets the alpha-2 code represention of the country. Returns 'XX' if none is found."""
+        if v:
+            return v
+        return countries.country_code(values.get("country", countries.DEFAULT_COUNTRY_CODE)).upper()
 
-class TimelinedLocation(Location):
+    @pydantic.validator("country_population", always=True)
+    def set_country_population(cls, v, values):
+        """Gets the population of this location."""
+        if v:
+            return v
+        return country_population(values["country_code"])
+
+    def dict(self, *args, exclude=None, exclude_none=True, **kwargs):
+        elided_keys = {"confirmed", "deaths", "recovered"}
+        if exclude:
+            elided_keys.update(exclude)
+        return super().dict(*args, exclude=elided_keys, exclude_none=True, **kwargs)
+
+
+class TimelinedLocation(BaseLocation):
     """
     A location with timelines.
     """
@@ -123,7 +110,11 @@ class TimelinedLocation(Location):
         return serialized
 
 
-class CSBSLocation(Location):
+class USLocation(BaseLocation):
+    pass
+
+
+class CSBSLocation(USLocation):
     """
     A CSBS (county) location.
     """
