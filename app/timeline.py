@@ -40,3 +40,6 @@ class Timeline:
         :rtype: dict
         """
         return {"latest": self.latest, "timeline": self.timeline}
+
+    def dict(self):
+        return self.serialize()
