@@ -8,6 +8,18 @@ from .utils import countries
 from .utils.populations import country_population
 
 
+class Coordinates(pydantic.BaseModel):
+    """
+    A position on earth using decimal coordinates (latitude and longitude).
+    """
+
+    latitude: float = 0.0
+    longitude: float = 0.0
+
+    def __str__(self):
+        return f"lat: {self.latitude}, long: {self.longitude}"
+
+
 class BaseLocation(pydantic.BaseModel):
     """A location in the world affected by the coronavirus."""
 
@@ -18,18 +30,17 @@ class BaseLocation(pydantic.BaseModel):
     province: str = None
 
     # coordinates
-    latitude: int = 0  # TODO
-    longitude: int = 0  # TODO
-    coordinates: Dict = None  # TODO
+    latitude: int = 0  # elide
+    longitude: int = 0  # elide
+    coordinates: Coordinates = None
 
     # Last update.
     last_updated: str
 
     # Statistics
-    confirmed: int = None
-    deaths: int = None
-    recovered: int = None
-
+    confirmed: int = None  # elide
+    deaths: int = None  # elide 
+    recovered: int = None  # elide
     latest: Latest = None  # Latest 'statistics'
 
     class Config:  # pylint: disable=too-few-public-methods
@@ -64,8 +75,16 @@ class BaseLocation(pydantic.BaseModel):
             return v
         return country_population(values["country_code"])
 
+    @pydantic.validator("coordinates", always=True)
+    @classmethod
+    def set_coordinates(cls, v, values):
+        """Sets the coordinates of the location."""
+        if v:
+            return v
+        return {"latitude": values["latitude"], "longitude": values["longitude"]}
+
     def dict(self, *args, exclude=None, exclude_none=True, **kwargs):
-        elided_keys = {"confirmed", "deaths", "recovered"}
+        elided_keys = {"confirmed", "deaths", "recovered", "latitude", "longitude"}
         if exclude:
             elided_keys.update(exclude)
         return super().dict(*args, exclude=elided_keys, exclude_none=True, **kwargs)

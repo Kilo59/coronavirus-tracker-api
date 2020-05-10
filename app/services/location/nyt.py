@@ -7,8 +7,7 @@ from asyncache import cached
 from cachetools import TTLCache
 
 from ...caches import check_cache, load_cache
-from ...coordinates import Coordinates
-from ...location import NYTLocation
+from ...location import Coordinates, NYTLocation
 from ...timeline import Timeline
 from ...utils import httputils
 from . import LocationService

@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 
-from app import coordinates, location, timeline
+from app import location, timeline
 
 
 def mocked_timeline(*args, **kwargs):
@@ -38,7 +38,7 @@ def test_location_class(
     recovered_latest,
 ):
     # id, country, province, coordinates, confirmed, deaths, recovered
-    coords = coordinates.Coordinates(latitude=latitude, longitude=longitude)
+    coords = location.Coordinates(latitude=latitude, longitude=longitude)
 
     # Timelines
     confirmed = timeline.Timeline(confirmed_latest)
@@ -113,4 +113,10 @@ def test_base_location(test_id, country, kwargs):
     if location_instance.country_code != "XX":
         assert location_instance.country_population
 
-    assert location_instance.coordinates
+    # test that keys are ellided
+    assert not {"longitude", "latitude", "confirmed", "deaths", "recovered"}.intersection(
+        set(location_instance.dict().keys())
+    )
+
+    assert location_instance.coordinates["latitude"]
+    assert location_instance.coordinates["longitude"]
