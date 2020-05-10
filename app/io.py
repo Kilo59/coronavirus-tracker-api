@@ -14,10 +14,14 @@ def save(
     content: Union[str, Dict, List],
     write_mode: str = "w",
     indent: int = 2,
+    data: bool = False,
     **json_dumps_kwargs,
 ) -> pathlib.Path:
     """Save content to a file. If content is a dictionary, use json.dumps()."""
-    path = DATA / name
+    if data:
+        path = DATA / name
+    else:
+        path = pathlib.Path(name)
     if isinstance(content, (dict, list)):
         content = json.dumps(content, indent=indent, **json_dumps_kwargs)
     with open(DATA / name, mode=write_mode) as f_out:
@@ -25,9 +29,12 @@ def save(
     return path
 
 
-def load(name: str, **json_kwargs) -> Union[str, Dict, List]:
+def load(name: str, data: bool = False, **json_kwargs) -> Union[str, Dict, List]:
     """Loads content from a file. If file ends with '.json', call json.load() and return a Dictionary."""
-    path = DATA / name
+    if data:
+        path = DATA / name
+    else:
+        path = pathlib.Path(name)
     with open(path) as f_in:
         if path.suffix == ".json":
             return json.load(f_in, **json_kwargs)
@@ -44,10 +51,14 @@ class AIO:
         content: Union[str, Dict, List],
         write_mode: str = "w",
         indent: int = 2,
+        data: bool = False,
         **json_dumps_kwargs,
     ):
         """Save content to a file. If content is a dictionary, use json.dumps()."""
-        path = DATA / name
+        if data:
+            path = DATA / name
+        else:
+            path = pathlib.Path(name)
         if isinstance(content, (dict, list)):
             content = json.dumps(content, indent=indent, **json_dumps_kwargs)
         async with aiofiles.open(DATA / name, mode=write_mode) as f_out:
@@ -55,9 +66,12 @@ class AIO:
         return path
 
     @classmethod
-    async def load(cls, name: str, **json_kwargs) -> Union[str, Dict, List]:
+    async def load(cls, name: str, data: bool = False, **json_kwargs) -> Union[str, Dict, List]:
         """Loads content from a file. If file ends with '.json', call json.load() and return a Dictionary."""
-        path = DATA / name
+        if data:
+            path = DATA / name
+        else:
+            path = pathlib.Path(name)
         async with aiofiles.open(path) as f_in:
             content = await f_in.read()
         if path.suffix == ".json":
