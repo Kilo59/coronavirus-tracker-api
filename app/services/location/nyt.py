@@ -114,7 +114,7 @@ async def get_locations():
                     id=idx,
                     state=county_state[1],
                     county=county_state[0],
-                    coordinates=Coordinates(None, None),  # NYT does not provide coordinates
+                    # NYT does not provide coordinates
                     last_updated=datetime.utcnow().isoformat() + "Z",  # since last request
                     timelines={
                         "confirmed": Timeline(

@@ -5,8 +5,8 @@
         "country_code": "US",
         "province": "Washington",
         "coordinates": {
-            "latitude": null,
-            "longitude": null
+            "latitude": 0.0,
+            "longitude": 0.0
         },
         "last_updated": "2020-04-12T19:14:59.638001Z",
         "latest": {
@@ -79,8 +79,8 @@
         "country_code": "US",
         "province": "Illinois",
         "coordinates": {
-            "latitude": null,
-            "longitude": null
+            "latitude": 0.0,
+            "longitude": 0.0
         },
         "last_updated": "2020-04-12T19:14:59.638001Z",
         "latest": {
@@ -129,8 +129,8 @@
         "country_code": "US",
         "province": "California",
         "coordinates": {
-            "latitude": null,
-            "longitude": null
+            "latitude": 0.0,
+            "longitude": 0.0
         },
         "last_updated": "2020-04-12T19:14:59.638001Z",
         "latest": {
@@ -177,8 +177,8 @@
         "country_code": "US",
         "province": "Arizona",
         "coordinates": {
-            "latitude": null,
-            "longitude": null
+            "latitude": 0.0,
+            "longitude": 0.0
         },
         "last_updated": "2020-04-12T19:14:59.638001Z",
         "latest": {
@@ -223,8 +223,8 @@
         "country_code": "US",
         "province": "California",
         "coordinates": {
-            "latitude": null,
-            "longitude": null
+            "latitude": 0.0,
+            "longitude": 0.0
         },
         "last_updated": "2020-04-12T19:14:59.638001Z",
         "latest": {
@@ -269,8 +269,8 @@
         "country_code": "US",
         "province": "California",
         "coordinates": {
-            "latitude": null,
-            "longitude": null
+            "latitude": 0.0,
+            "longitude": 0.0
         },
         "last_updated": "2020-04-12T19:14:59.638001Z",
         "latest": {

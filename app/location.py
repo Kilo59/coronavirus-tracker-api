@@ -1,4 +1,5 @@
 """app.location"""
+import datetime as dt
 from typing import Dict
 
 import pydantic
@@ -30,16 +31,16 @@ class BaseLocation(pydantic.BaseModel):
     province: str = None
 
     # coordinates
-    latitude: int = 0  # elide
-    longitude: int = 0  # elide
+    latitude: float = 0.0  # elide
+    longitude: float = 0.0  # elide
     coordinates: Coordinates = None
 
     # Last update.
-    last_updated: str
+    last_updated: str = f"{dt.datetime.utcnow()}Z"
 
     # Statistics
     confirmed: int = None  # elide
-    deaths: int = None  # elide 
+    deaths: int = None  # elide
     recovered: int = None  # elide
     latest: Latest = None  # Latest 'statistics'
 
