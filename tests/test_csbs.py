@@ -1,3 +1,5 @@
+from pprint import pprint as pp
+
 import pytest
 
 from app.services.location import csbs
@@ -33,5 +35,8 @@ async def test_get_locations(mock_client_session):
 
     # check to see that Unknown/Unassigned has been filtered
     for d in data:
+        pp(d.dict())
         assert d.county != "Unknown"
         assert d.county != "Unassigned"
+        # check that there are no timelines
+        assert not d.timelines
