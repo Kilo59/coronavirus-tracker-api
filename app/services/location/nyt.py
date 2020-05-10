@@ -7,7 +7,7 @@ from asyncache import cached
 from cachetools import TTLCache
 
 from ...caches import check_cache, load_cache
-from ...location import Coordinates, NYTLocation
+from ...location import USLocation
 from ...timeline import Timeline
 from ...utils import httputils
 from . import LocationService
@@ -110,7 +110,7 @@ async def get_locations():
 
             # Normalize the item and append to locations.
             locations.append(
-                NYTLocation(
+                USLocation(
                     id=idx,
                     state=county_state[1],
                     county=county_state[0],

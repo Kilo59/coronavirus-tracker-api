@@ -29,6 +29,7 @@ class BaseLocation(pydantic.BaseModel):
     country_code: str = None
     country_population: int = None
     province: str = None
+    county: str = None
 
     # coordinates
     latitude: float = 0.0  # elide
@@ -114,74 +115,14 @@ class TimelinedLocation(BaseLocation):
         return serialized
 
 
-class USLocation(BaseLocation):
-    pass
+class USLocation(TimelinedLocation):
+    country: str = "US"
+    country_code: str = "US"
+    state: str
 
-
-class CSBSLocation(USLocation):
-    """
-    A CSBS (county) location.
-    """
-
-    # pylint: disable=too-many-arguments,redefined-builtin
-    def __init__(self, id, state, county, coordinates, last_updated, confirmed, deaths):
-        super().__init__(
-            # General info.
-            id,
-            "US",
-            state,
-            coordinates,
-            last_updated,
-            # Statistics.
-            confirmed=confirmed,
-            deaths=deaths,
-            recovered=0,
-        )
-
-        self.state = state
-        self.county = county
-
-    def serialize(self, timelines=False):  # pylint: disable=arguments-differ,unused-argument
-        """
-        Serializes the location into a dict.
-        :returns: The serialized location.
-        :rtype: dict
-        """
-        serialized = super().serialize()
-
-        # Update with new fields.
-        serialized.update(
-            {"state": self.state, "county": self.county,}
-        )
-
-        # Return the serialized location.
-        return serialized
-
-
-class NYTLocation(TimelinedLocation):
-    """
-    A NYT (county) Timelinedlocation.
-    """
-
-    # pylint: disable=too-many-arguments,redefined-builtin
-    def __init__(self, id, state, county, coordinates, last_updated, timelines):
-        super().__init__(id, "US", state, coordinates, last_updated, timelines)
-
-        self.state = state
-        self.county = county
-
-    def serialize(self, timelines=False):  # pylint: disable=arguments-differ,unused-argument
-        """
-        Serializes the location into a dict.
-        :returns: The serialized location.
-        :rtype: dict
-        """
-        serialized = super().serialize(timelines)
-
-        # Update with new fields.
-        serialized.update(
-            {"state": self.state, "county": self.county,}
-        )
-
-        # Return the serialized location.
-        return serialized
+    @pydantic.root_validator
+    @classmethod
+    def set_province(cls, values):
+        """Sets the province according to the `state`."""
+        values["province"] = values["state"]
+        return values
