@@ -1,9 +1,11 @@
 import json
+from pprint import pprint as pp
 from unittest import mock
 
 import pytest
 
-from app.location import NYTLocation, TimelinedLocation
+from app import io
+from app.location import TimelinedLocation, USLocation
 from app.services.location import nyt
 from tests.conftest import mocked_strptime_isoformat
 
@@ -21,12 +23,12 @@ async def test_get_locations(mock_client_session):
 
     serialized_locations = []
     for location in locations:
-        assert isinstance(location, NYTLocation)
+        assert isinstance(location, USLocation)
         assert isinstance(location, TimelinedLocation)
 
         # Making sure country population is a non-zero value
         assert location.country_population != 0
-        serialized_location = location.serialize(timelines=True)
+        serialized_location = location.dict(timelines=True)
         # Not checking for exact value of country population
         del serialized_location["country_population"]
 
@@ -34,8 +36,7 @@ async def test_get_locations(mock_client_session):
 
     produced_json_output = json.dumps(serialized_locations)
 
-    with open("tests/expected_output/nyt_locations.json", "r") as file:
-        expected_json_output = file.read()
+    expected_json_output = io.load("tests/expected_output/nyt_locations.json")
 
     # translate them into python lists for ordering
-    assert json.loads(expected_json_output) == json.loads(produced_json_output)
+    assert expected_json_output == json.loads(produced_json_output)
