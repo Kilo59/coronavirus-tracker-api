@@ -3,8 +3,7 @@ from unittest import mock
 
 import pytest
 
-from app.location import TimelinedLocation
-from app.location.nyt import NYTLocation
+from app.location import NYTLocation, TimelinedLocation
 from app.services.location import nyt
 from tests.conftest import mocked_strptime_isoformat
 
