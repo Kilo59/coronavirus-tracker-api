@@ -1,5 +1,5 @@
 """app.models.py"""
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from pydantic import BaseModel, validator
 
@@ -58,6 +58,15 @@ class Timelines(BaseModel):
     recovered: Timeline
 
 
+class Coordinates(BaseModel):
+    """
+    A position on earth using decimal coordinates (latitude and longitude).
+    """
+
+    latitude: Union[str, int] = None
+    longitude: Union[str, int] = None
+
+
 class Location(BaseModel):
     """
     Location model.
@@ -70,7 +79,7 @@ class Location(BaseModel):
     province: str = ""
     county: str = ""
     last_updated: str  # TODO use datetime.datetime type.
-    coordinates: Dict
+    coordinates: Coordinates
     latest: Latest
     timelines: Timelines = {}
 

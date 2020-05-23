@@ -1,12 +1,19 @@
-from collections import OrderedDict
-from unittest import mock
-
 import pytest
 
 from app import models
 
 
-def test_timeline_class():
+@pytest.mark.parametrize("latitude, longitude", [("1", "2"), (100, "2"), (-3, 0), (-10, -10000000)])
+def test_coordinates_model(latitude, longitude):
+    coord_obj = models.Coordinates(latitude=latitude, longitude=longitude)
+
+    # validate serialize
+    check_obj = {"latitude": str(latitude), "longitude": str(longitude)}
+
+    assert coord_obj.dict() == check_obj
+
+
+def test_timeline_model():
     # Unordered timeseries.
     timeseries = {
         "1/24/20": 5,
@@ -31,7 +38,7 @@ def test_timeline_class():
     # validate serialize
     check_serialize = {
         "latest": 7,
-        "timeline": OrderedDict([("1/22/20", 2), ("1/23/20", 3), ("1/24/20", 5), ("1/25/20", 7),]),
+        "timeline": dict([("1/22/20", 2), ("1/23/20", 3), ("1/24/20", 5), ("1/25/20", 7),]),
     }
 
     assert dict(history_data.serialize()) == check_serialize
