@@ -18,9 +18,9 @@ class Sources(str, enum.Enum):
 
 # Mapping of services to data-sources.
 DATA_SOURCES = {
-    "jhu": JhuLocationService(),
-    "csbs": CSBSLocationService(),
-    "nyt": NYTLocationService(),
+    Sources.jhu: JhuLocationService(),
+    Sources.csbs: CSBSLocationService(),
+    Sources.nyt: NYTLocationService(),
 }
 
 
