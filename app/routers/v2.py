@@ -3,20 +3,10 @@ import enum
 
 from fastapi import APIRouter, HTTPException, Request
 
-from ..data import DATA_SOURCES
+from ..data import DATA_SOURCES, Sources
 from ..models import LatestResponse, LocationResponse, LocationsResponse
 
 V2 = APIRouter()
-
-
-class Sources(str, enum.Enum):
-    """
-    A source available for retrieving data.
-    """
-
-    jhu = "jhu"
-    csbs = "csbs"
-    nyt = "nyt"
 
 
 @V2.get("/latest", response_model=LatestResponse)

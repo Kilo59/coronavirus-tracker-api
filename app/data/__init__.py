@@ -1,7 +1,20 @@
 """app.data"""
+import enum
+
 from ..services.location.csbs import CSBSLocationService
 from ..services.location.jhu import JhuLocationService
 from ..services.location.nyt import NYTLocationService
+
+
+class Sources(str, enum.Enum):
+    """
+    A source available for retrieving data.
+    """
+
+    jhu = "jhu"
+    csbs = "csbs"
+    nyt = "nyt"
+
 
 # Mapping of services to data-sources.
 DATA_SOURCES = {
