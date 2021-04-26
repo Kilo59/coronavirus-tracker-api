@@ -18,6 +18,7 @@ pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
 responses = "*"
+pyloot = "*"
 
 [packages]
 aiocache = {extras = ["redis"],version = "*"}

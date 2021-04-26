@@ -15,6 +15,7 @@ from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 
 from .config import get_settings
 from .data import data_source
+from .profiling import add_profiler
 from .routers import V1, V2
 from .utils.httputils import setup_client_session, teardown_client_session
 
@@ -44,6 +45,9 @@ APP = FastAPI(
 # #####################
 # Middleware
 #######################
+
+# Profiling
+add_profiler(APP)
 
 # Scout APM
 if SETTINGS.scout_name:  # pragma: no cover
