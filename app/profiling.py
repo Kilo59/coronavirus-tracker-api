@@ -11,9 +11,9 @@ LOGGER = logging.getLogger("profiling")
 def add_profiler(app: FastAPI, mount: str = "/_pyloot"):
     try:
 
-        from pyloot import PyLoot
+        from pyloot import PyLoot, PyLootServer
 
-        pyloot = PyLoot()
+        pyloot = PyLoot(server=PyLootServer(disable_response_gzip=True))
 
         def pyloot_wrapper(wsgi_environ, start_response):
             pyloot_environ = wsgi_environ.copy()
